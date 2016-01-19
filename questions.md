@@ -1,6 +1,6 @@
 # Questionnaire
 
-__ 3 question spécifiques dirigées : (réponse de type quantification; choix fixé...etc) __
+## 3 question spécifiques dirigées : (réponse de type quantification; choix fixé...etc)
 
  - Je prends des notes de cours : jamais, rarement, souvent, toujours.
    - 
@@ -13,7 +13,7 @@ __ 3 question spécifiques dirigées : (réponse de type quantification; choix f
  - Avez vous tendance à égarer vos notes ? Jamais, rarement, parfois, souvent
    - 
 
-__ 3 question spécifiques ouvertes : (réponse de type binaire avec description) __
+## 3 question spécifiques ouvertes : (réponse de type binaire avec description) 
 
  - Lorsque vous êtes absents, récupérez-vous les notes de vos camarades ? Si non, pourquoi ?
    - 
@@ -26,7 +26,7 @@ __ 3 question spécifiques ouvertes : (réponse de type binaire avec description
  - Si vous rédigez vos notes de cours par ordinateur, sous quel(s) format(s) de fichier les enregistrez-vous ?
    - 
 
-__ 3 question générales ouvertes : __
+## 3 question générales ouvertes : 
 
  - Vous est-il compliqué de vous y retrouver dans vos notes ? Expliquez.
    - 
