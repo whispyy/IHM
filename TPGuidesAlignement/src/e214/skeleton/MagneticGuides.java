@@ -26,7 +26,7 @@ import java.util.LinkedList ;
  * @author Nicolas Roussel (roussel@lri.fr)
  *
  */
-@SuppressWarnings("serial")
+
 public class MagneticGuides extends JFrame {
 
     private Canvas canvas ;
