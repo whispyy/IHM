@@ -7,30 +7,34 @@ import fr.lri.swingstates.canvas.CSegment ;
 import fr.lri.swingstates.canvas.CTag ;
 import fr.lri.swingstates.canvas.CExtensionalTag ;
 import fr.lri.swingstates.canvas.CStateMachine ;
-import fr.lri.swingstates.canvas.transitions.PressOnShape;
+import fr.lri.swingstates.canvas.transitions.LeaveOnTag;
 import fr.lri.swingstates.canvas.transitions.PressOnTag ;
 import fr.lri.swingstates.sm.State;
 import fr.lri.swingstates.sm.Transition;
-import fr.lri.swingstates.sm.transitions.Click;
+import fr.lri.swingstates.canvas.transitions.EnterOnTag;
 import fr.lri.swingstates.sm.transitions.Drag ;
-import fr.lri.swingstates.sm.transitions.MouseOnPosition;
+import fr.lri.swingstates.sm.transitions.Press;
 import fr.lri.swingstates.sm.transitions.Release ;
 
 import java.awt.Color ;
 import java.awt.BasicStroke ;
+import java.awt.Paint;
 import java.awt.geom.Point2D ;
+
 import javax.swing.JFrame ;
+
+import java.rmi.dgc.Lease;
 import java.util.LinkedList ;
 
 /**
  * @author Nicolas Roussel (roussel@lri.fr)
  *
  */
-
 public class MagneticGuides extends JFrame {
 
     private Canvas canvas ;
     private CExtensionalTag oTag ;
+    private CExtensionalTag magneticGuide;
 
     public MagneticGuides(String title, int width, int height) {
 	   super(title) ;
@@ -38,47 +42,100 @@ public class MagneticGuides extends JFrame {
 	   canvas.setAntialiased(true) ;
 	   getContentPane().add(canvas) ;
 
-	   
 	   oTag = new CExtensionalTag(canvas) {} ;
 	   
-	   
+	   magneticGuide = new MagneticGuide(canvas);
+
 	   CStateMachine sm = new CStateMachine() {
 
 			 private Point2D p ;
-			 private CShape draggedShape ;
-			 private MagneticGuide mg;
+			 private CShape draggedShape;
+			 private CShape guide;
+			 private Paint guideDefaultColor;
 
 			 public State start = new State() {
-				 Transition pressOnObject = new PressOnTag(oTag, BUTTON1, ">> oDrag") {
-					  public void action() {
-						 p = getPoint() ;
-						 draggedShape = getShape() ;
-					  }
-				};
-				MouseOnPosition Hguide = new Click(BUTTON1){
-					public void action(){
-						mg = new MagneticGuide(getPoint().getY(),true,canvas);
-						mg.getSeg().addTag(oTag);
-					}
-				};
-				MouseOnPosition Vguide = new Click(BUTTON3){
-					public void action(){
-						mg = new MagneticGuide(getPoint().getX(),false,canvas);
-						mg.getSeg().addTag(oTag);
-					}
-				};
-					 
-			 };
-			 public State oDrag = new State() {
-				    Transition drag = new Drag(BUTTON1) {
+				    Transition pressOnObject = new PressOnTag(oTag, BUTTON1, ">> oDrag") {
 						  public void action() {
-							 Point2D q = getPoint() ;
-							 draggedShape.translateBy(q.getX() - p.getX(), q.getY() - p.getY()) ;
-							 p = q ;
+							 p = getPoint() ;
+							 draggedShape = getShape() ;
 						  }
 					   } ;
-				    Transition release = new Release(BUTTON1, ">> start") {} ;
+					   
+					Transition pressOnCanvas1 = new Press(BUTTON1,CONTROL){
+				    	public void action(){
+				    		p = getPoint() ;
+				    		CSegment segment = canvas.newSegment(0, p.getY(), canvas.getWidth(), p.getY());
+				    		segment.belowAll();
+				    		segment.addTag(magneticGuide);
+				    	}
+					};
+					
+					Transition pressOnCanvas2 = new Press(BUTTON3,CONTROL){
+				    	public void action(){
+				    		p = getPoint() ;
+				    		CSegment segment = canvas.newSegment( p.getX(),0, p.getX(), canvas.getHeight());
+				    		segment.belowAll();
+				    		segment.addTag(magneticGuide);
+				    	}
+					};
+					
+					Transition pressOnMagneticGuide = new PressOnTag(magneticGuide,BUTTON1, ">>magneticguideDrag") {
+						public void action(){
+							p = getPoint() ;
+							draggedShape = getShape() ;
+						}
+					};
 				} ;
+
+			public State oDrag = new State() {
+				Transition drag = new Drag(BUTTON1) {
+					public void action() {
+						Point2D q = getPoint();
+						draggedShape.translateBy(q.getX() - p.getX(), q.getY()
+								- p.getY());
+						p = q;
+					}
+				};
+				Transition release = new Release(BUTTON1, ">> start") {
+					public void action(){
+					}
+				};
+				
+				Transition onGuide = new EnterOnTag(magneticGuide, ">> objectOnGuide"){					
+					public void action(){
+						guide = getShape();
+						guideDefaultColor = guide.getFillPaint();
+						guide.setFillPaint(Color.YELLOW);
+					}
+				};
+			};
+			
+			public State magneticguideDrag = new State() {
+				Transition drag = new Drag(BUTTON1) {
+					public void action() {
+						Point2D q = getPoint();
+						draggedShape.translateBy(0, q.getY() - p.getY());
+						p = q;
+					}
+				};
+				Transition release = new Release(BUTTON1, ">> start") {
+				};
+			};
+			
+			public State objectOnGuide = new State() {
+				Transition releaseObjectOnGuide = new Release(">>start"){
+					public void action(){
+						draggedShape.addTag(magneticGuide);
+					}
+				};
+				
+				Transition objectLeaveGuide = new LeaveOnTag(magneticGuide){
+					public void action(){
+						
+					}
+				};
+			};
+
 		  } ;
 	   sm.attachTo(canvas);
 

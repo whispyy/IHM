@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/m1/durand/Documents/IHM/TPGuidesAlignement/swingstates_0.3_14_02_18/SwingStates.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Admin/Documents/Travail/IHM/TPGuidesAlignement/swingstates_0.3_14_02_18/SwingStates.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
